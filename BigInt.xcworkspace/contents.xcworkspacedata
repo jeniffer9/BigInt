@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Carthage/Checkouts/SipHash/SipHash.xcodeproj">
+      location = "group:../SipHash/SipHash.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:BigInt.xcodeproj">

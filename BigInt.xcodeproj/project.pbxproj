@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		113334DA1F23C2D3002FD689 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334CD1F23C2C3002FD689 /* SipHash.framework */; };
 		BB241C421DDB70600067F917 /* BigDigit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C2E1DDB70600067F917 /* BigDigit.swift */; };
 		BB241C431DDB70600067F917 /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C2F1DDB70600067F917 /* BigInt.swift */; };
 		BB241C441DDB70600067F917 /* BigUInt Addition.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C301DDB70600067F917 /* BigUInt Addition.swift */; };
@@ -88,7 +89,6 @@
 		BB241CC01DDB71A60067F917 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C5A1DDB70690067F917 /* ProfileTests.swift */; };
 		BB241CC51DDB71A60067F917 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C5A1DDB70690067F917 /* ProfileTests.swift */; };
 		BB241CCA1DDB71A70067F917 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C5A1DDB70690067F917 /* ProfileTests.swift */; };
-		BB241CCD1DDB71DB0067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CCC1DDB71DB0067F917 /* SipHash.framework */; };
 		BB241CCF1DDB71E30067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CCE1DDB71E30067F917 /* SipHash.framework */; };
 		BB241CD11DDB71EA0067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CD01DDB71EA0067F917 /* SipHash.framework */; };
 		BB241CD31DDB71F20067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CD21DDB71F20067F917 /* SipHash.framework */; };
@@ -114,6 +114,55 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		113334CC1F23C2C3002FD689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB55AB21C8F80020050DDA9;
+			remoteInfo = iOS;
+		};
+		113334CE1F23C2C3002FD689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB55AD41C8F88F20050DDA9;
+			remoteInfo = macOS;
+		};
+		113334D01F23C2C3002FD689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB55AF11C8F8BE00050DDA9;
+			remoteInfo = watchOS;
+		};
+		113334D21F23C2C3002FD689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB55AFE1C8F8CBB0050DDA9;
+			remoteInfo = tvOS;
+		};
+		113334D41F23C2C3002FD689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB55ABC1C8F80020050DDA9;
+			remoteInfo = "iOS Tests";
+		};
+		113334D61F23C2C3002FD689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB55ADD1C8F88F20050DDA9;
+			remoteInfo = "macOS Tests";
+		};
+		113334D81F23C2C3002FD689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB55B071C8F8CBB0050DDA9;
+			remoteInfo = "tvOS Tests";
+		};
 		BB241C621DDB70B00067F917 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BBB55AA91C8F80020050DDA9 /* Project object */;
@@ -145,6 +194,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		113334C21F23C2C3002FD689 /* SipHash.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SipHash.xcodeproj; path = ../SipHash/SipHash.xcodeproj; sourceTree = "<group>"; };
 		BB241BC51DD9F6490067F917 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		BB241BC71DD9F7D60067F917 /* BigInt.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; path = BigInt.podspec; sourceTree = "<group>"; };
 		BB241C2E1DDB70600067F917 /* BigDigit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BigDigit.swift; sourceTree = "<group>"; };
@@ -212,7 +262,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB241CCD1DDB71DB0067F917 /* SipHash.framework in Frameworks */,
+				113334DA1F23C2D3002FD689 /* SipHash.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,9 +320,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		113334C31F23C2C3002FD689 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				113334CD1F23C2C3002FD689 /* SipHash.framework */,
+				113334CF1F23C2C3002FD689 /* SipHash.framework */,
+				113334D11F23C2C3002FD689 /* SipHash.framework */,
+				113334D31F23C2C3002FD689 /* SipHash.framework */,
+				113334D51F23C2C3002FD689 /* SipHash-Test.xctest */,
+				113334D71F23C2C3002FD689 /* SipHash-Test.xctest */,
+				113334D91F23C2C3002FD689 /* SipHash-Test.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		BB241CCB1DDB71DB0067F917 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				113334C21F23C2C3002FD689 /* SipHash.xcodeproj */,
 				BB241CD71DDB78A30067F917 /* SipHash.framework */,
 				BB241CD51DDB789D0067F917 /* SipHash.framework */,
 				BB241CD21DDB71F20067F917 /* SipHash.framework */,
@@ -584,6 +649,12 @@
 			mainGroup = BBB55AA81C8F80020050DDA9;
 			productRefGroup = BBB55AB31C8F80020050DDA9 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 113334C31F23C2C3002FD689 /* Products */;
+					ProjectRef = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				BBB55AB11C8F80020050DDA9 /* BigInt-iOS */,
@@ -597,6 +668,58 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		113334CD1F23C2C3002FD689 /* SipHash.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SipHash.framework;
+			remoteRef = 113334CC1F23C2C3002FD689 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		113334CF1F23C2C3002FD689 /* SipHash.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SipHash.framework;
+			remoteRef = 113334CE1F23C2C3002FD689 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		113334D11F23C2C3002FD689 /* SipHash.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SipHash.framework;
+			remoteRef = 113334D01F23C2C3002FD689 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		113334D31F23C2C3002FD689 /* SipHash.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SipHash.framework;
+			remoteRef = 113334D21F23C2C3002FD689 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		113334D51F23C2C3002FD689 /* SipHash-Test.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "SipHash-Test.xctest";
+			remoteRef = 113334D41F23C2C3002FD689 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		113334D71F23C2C3002FD689 /* SipHash-Test.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "SipHash-Test.xctest";
+			remoteRef = 113334D61F23C2C3002FD689 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		113334D91F23C2C3002FD689 /* SipHash-Test.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "SipHash-Test.xctest";
+			remoteRef = 113334D81F23C2C3002FD689 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		BB241C661DDB70B00067F917 /* Resources */ = {
