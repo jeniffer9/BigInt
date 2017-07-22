@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		113334DA1F23C2D3002FD689 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334CD1F23C2C3002FD689 /* SipHash.framework */; };
-		BB241C421DDB70600067F917 /* BigDigit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C2E1DDB70600067F917 /* BigDigit.swift */; };
-		BB241C431DDB70600067F917 /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C2F1DDB70600067F917 /* BigInt.swift */; };
+		11A7395F1F23C473001ACD6D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334CF1F23C2C3002FD689 /* SipHash.framework */; };
+		11A739601F23C47A001ACD6D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334D11F23C2C3002FD689 /* SipHash.framework */; };
+		11A739611F23C480001ACD6D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334D31F23C2C3002FD689 /* SipHash.framework */; };
 		BB241C441DDB70600067F917 /* BigUInt Addition.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C301DDB70600067F917 /* BigUInt Addition.swift */; };
 		BB241C451DDB70600067F917 /* BigUInt Bitwise Ops.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C311DDB70600067F917 /* BigUInt Bitwise Ops.swift */; };
 		BB241C461DDB70600067F917 /* BigUInt Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C321DDB70600067F917 /* BigUInt Comparison.swift */; };
@@ -79,9 +80,6 @@
 		BB241CC01DDB71A60067F917 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C5A1DDB70690067F917 /* ProfileTests.swift */; };
 		BB241CC51DDB71A60067F917 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C5A1DDB70690067F917 /* ProfileTests.swift */; };
 		BB241CCA1DDB71A70067F917 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C5A1DDB70690067F917 /* ProfileTests.swift */; };
-		BB241CCF1DDB71E30067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CCE1DDB71E30067F917 /* SipHash.framework */; };
-		BB241CD11DDB71EA0067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CD01DDB71EA0067F917 /* SipHash.framework */; };
-		BB241CD31DDB71F20067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CD21DDB71F20067F917 /* SipHash.framework */; };
 		BB241CD41DDB78920067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CCE1DDB71E30067F917 /* SipHash.framework */; };
 		BB241CD61DDB789D0067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CD51DDB789D0067F917 /* SipHash.framework */; };
 		BB241CD81DDB78A30067F917 /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB241CD71DDB78A30067F917 /* SipHash.framework */; };
@@ -263,7 +261,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB241CCF1DDB71E30067F917 /* SipHash.framework in Frameworks */,
+				11A7395F1F23C473001ACD6D /* SipHash.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +278,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB241CD11DDB71EA0067F917 /* SipHash.framework in Frameworks */,
+				11A739601F23C47A001ACD6D /* SipHash.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,7 +286,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB241CD31DDB71F20067F917 /* SipHash.framework in Frameworks */,
+				11A739611F23C480001ACD6D /* SipHash.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,11 +594,11 @@
 				TargetAttributes = {
 					BBB55AB11C8F80020050DDA9 = {
 						CreatedOnToolsVersion = 7.3;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 0900;
 					};
 					BBB55ABB1C8F80020050DDA9 = {
 						CreatedOnToolsVersion = 7.3;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 					BBB55AD31C8F88F20050DDA9 = {
 						CreatedOnToolsVersion = 7.3;
@@ -1077,6 +1075,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1096,6 +1096,8 @@
 				PRODUCT_NAME = "$(PROJECT_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1110,6 +1112,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_IDENTIFIER_BASE).Tests";
 				PRODUCT_NAME = "$(PROJECT_NAME)-Test";
 				SDKROOT = iphoneos;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1123,6 +1127,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_IDENTIFIER_BASE).Tests";
 				PRODUCT_NAME = "$(PROJECT_NAME)-Test";
 				SDKROOT = iphoneos;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
