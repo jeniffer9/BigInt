@@ -10,31 +10,33 @@ import XCTest
 @testable import BigInt
 
 class BigIntTests: XCTestCase {
+    typealias Word = BigInt.Word
+
     func testInit() {
-        XCTAssertTrue(BigInt(IntMax.min).negative)
-        XCTAssertEqual(BigInt(IntMax.min).abs - 1, BigInt(IntMax.max).abs)
+        XCTAssertEqual(BigInt(Int64.min).sign, .minus)
+        XCTAssertEqual(BigInt(Int64.min).magnitude - 1, BigInt(Int64.max).magnitude)
 
         let zero = BigInt(0)
-        XCTAssertTrue(zero.abs.isZero)
-        XCTAssertFalse(zero.negative)
+        XCTAssertTrue(zero.magnitude.isZero)
+        XCTAssertEqual(zero.sign, .plus)
 
         let minusOne = BigInt(-1)
-        XCTAssertEqual(minusOne.abs, 1)
-        XCTAssertTrue(minusOne.negative)
+        XCTAssertEqual(minusOne.magnitude, 1)
+        XCTAssertEqual(minusOne.sign, .minus)
 
         let b: BigInt = 42
-        XCTAssertEqual(b.abs, 42)
-        XCTAssertFalse(b.negative)
+        XCTAssertEqual(b.magnitude, 42)
+        XCTAssertEqual(b.sign, .plus)
 
-        XCTAssertEqual(BigInt(UIntMax.max).abs, BigUInt(UIntMax.max))
+        XCTAssertEqual(BigInt(UInt64.max).magnitude, BigUInt(UInt64.max))
 
         let b2: BigInt = "+300"
-        XCTAssertEqual(b2.abs, 300)
-        XCTAssertFalse(b2.negative)
+        XCTAssertEqual(b2.magnitude, 300)
+        XCTAssertEqual(b2.sign, .plus)
 
         let b3: BigInt = "-300"
-        XCTAssertEqual(b3.abs, 300)
-        XCTAssertTrue(b3.negative)
+        XCTAssertEqual(b3.magnitude, 300)
+        XCTAssertEqual(b3.sign, .minus)
 
         XCTAssertNil(BigInt("Not a number"))
 
@@ -43,9 +45,33 @@ class BigIntTests: XCTestCase {
     }
 
     func testSign() {
-        XCTAssertTrue(BigInt(-1).negative)
-        XCTAssertFalse(BigInt(0).negative)
-        XCTAssertFalse(BigInt(1).negative)
+        XCTAssertEqual(BigInt(-1).sign, .minus)
+        XCTAssertEqual(BigInt(0).sign, .plus)
+        XCTAssertEqual(BigInt(1).sign, .plus)
+    }
+
+    func testWords() {
+        XCTAssertEqual(Array(BigInt(0).words), [])
+        XCTAssertEqual(Array(BigInt(1).words), [1])
+        XCTAssertEqual(Array(BigInt(-1).words), [Word.max])
+
+        XCTAssertEqual(Array(BigInt(sign: .plus, magnitude: BigUInt(words: [Word.max])).words), [Word.max, 0])
+        XCTAssertEqual(Array(BigInt(sign: .minus, magnitude: BigUInt(words: [Word.max])).words), [1, Word.max])
+
+        XCTAssertEqual(Array((BigInt(1) << Word.bitWidth).words), [0, 1])
+        XCTAssertEqual(Array((-(BigInt(1) << Word.bitWidth)).words), [0, Word.max])
+
+        XCTAssertEqual(Array((BigInt(42) << Word.bitWidth).words), [0, 42])
+        XCTAssertEqual(Array((-(BigInt(42) << Word.bitWidth)).words), [0, Word.max - 41])
+
+        let huge = BigUInt(words: [0, 1, 2, 3, 4])
+        XCTAssertEqual(Array(BigInt(sign: .plus, magnitude: huge).words), [0, 1, 2, 3, 4])
+        XCTAssertEqual(Array(BigInt(sign: .minus, magnitude: huge).words),
+                       [0, Word.max, ~2, ~3, ~4] as [Word])
+
+
+        XCTAssertEqual(BigInt(1).words[100], 0)
+        XCTAssertEqual(BigInt(-1).words[100], Word.max)
     }
 
     func testConversionToString() {
@@ -146,29 +172,14 @@ class BigIntTests: XCTestCase {
     }
 
     func testAbsoluteValuableRequirements() {
-        XCTAssertEqual(BigInt(5), BigInt.abs(5))
-        XCTAssertEqual(BigInt(0), BigInt.abs(0))
-        XCTAssertEqual(BigInt(5), BigInt.abs(-5))
+        XCTAssertEqual(BigInt(5), abs(5 as BigInt))
+        XCTAssertEqual(BigInt(0), abs(0 as BigInt))
+        XCTAssertEqual(BigInt(5), abs(-5 as BigInt))
     }
 
     func testIntegerArithmeticRequirements() {
-        XCTAssertEqual(3 as IntMax, BigInt(3).toIntMax())
-        XCTAssertEqual(-3 as IntMax, BigInt(-3).toIntMax())
-
-        XCTAssertEqual(2, BigInt.addWithOverflow(1, 1).0)
-        XCTAssertFalse(BigInt.addWithOverflow(1, 1).overflow)
-
-        XCTAssertEqual(-1, BigInt.subtractWithOverflow(2, 3).0)
-        XCTAssertFalse(BigInt.subtractWithOverflow(2, 3).overflow)
-
-        XCTAssertEqual(20, BigInt.multiplyWithOverflow(5, 4).0)
-        XCTAssertFalse(BigInt.multiplyWithOverflow(5, 4).overflow)
-
-        XCTAssertEqual(3, BigInt.divideWithOverflow(17, 5).0)
-        XCTAssertFalse(BigInt.divideWithOverflow(5, 4).overflow)
-
-        XCTAssertEqual(2, BigInt.remainderWithOverflow(17, 5).0)
-        XCTAssertFalse(BigInt.remainderWithOverflow(5, 4).overflow)
+        XCTAssertEqual(3 as Int64, Int64(3 as BigInt))
+        XCTAssertEqual(-3 as Int64, Int64(-3 as BigInt))
     }
 
     func testAssignmentOperators() {

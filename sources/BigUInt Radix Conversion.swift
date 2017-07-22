@@ -10,18 +10,18 @@ extension BigUInt: CustomStringConvertible {
 
     //MARK: Radix Conversion
 
-    /// Calculates the number of numerals in a given radix that fit inside a single `Digit`.
+    /// Calculates the number of numerals in a given radix that fit inside a single `Word`.
     ///
-    /// - Returns: (chars, power) where `chars` is highest that satisfy `radix^chars <= 2^Digit.width`. `power` is zero
+    /// - Returns: (chars, power) where `chars` is highest that satisfy `radix^chars <= 2^Word.bitWidth`. `power` is zero
     ///   if radix is a power of two; otherwise `power == radix^chars`.
-    fileprivate static func charsPerDigit(forRadix radix: Int) -> (chars: Int, power: Digit) {
-        var power: Digit = 1
-        var overflow = false
+    fileprivate static func charsPerWord(forRadix radix: Int) -> (chars: Int, power: Word) {
+        var power: Word = 1
+        var overflow = ArithmeticOverflow.none
         var count = 0
-        while !overflow {
-            let (p, o) = Digit.multiplyWithOverflow(power, Digit(radix))
+        while overflow == .none {
+            let (p, o) = power.multipliedReportingOverflow(by: Word(radix))
             overflow = o
-            if !o || p == 0 {
+            if o == .none || p == 0 {
                 count += 1
                 power = p
             }
@@ -37,35 +37,43 @@ extension BigUInt: CustomStringConvertible {
     /// - Parameter `radix`: The base of the number system to use, or 10 if unspecified.
     /// - Returns: The integer represented by `text`, or nil if `text` contains a character that does not represent a numeral in `radix`.
     public init?(_ text: String, radix: Int = 10) {
-        precondition(radix > 1)
-        let (charsPerDigit, power) = BigUInt.charsPerDigit(forRadix: radix)
+        // FIXME Remove this member when SE-0183 is done
+        self.init(Substring(text), radix: radix)
+    }
 
-        var digits: [Digit] = []
-        var piece: String = ""
+    public init?<S: StringProtocol>(_ text: S, radix: Int = 10) {
+        precondition(radix > 1)
+        let (charsPerWord, power) = BigUInt.charsPerWord(forRadix: radix)
+
+        var words: [Word] = []
+        var end = text.endIndex
+        var start = end
         var count = 0
-        for c in text.characters.reversed() {
-            piece.insert(c, at: piece.startIndex)
+        while start != text.startIndex {
+            start = text.index(before: start)
             count += 1
-            if count == charsPerDigit {
-                guard let d = Digit(piece, radix: radix) else { return nil }
-                digits.append(d)
-                piece = ""
+            if count == charsPerWord {
+                // FIXME Remove String conversion when SE-0183 is done
+                guard let d = Word(String(text[start ..< end]), radix: radix) else { return nil }
+                words.append(d)
+                end = start
                 count = 0
             }
         }
-        if !piece.isEmpty {
-            guard let d = Digit(piece, radix: radix) else { return nil }
-            digits.append(d)
+        if start != end {
+            // FIXME Remove String conversion when SE-0183 is done
+            guard let d = Word(String(text[start ..< end]), radix: radix) else { return nil }
+            words.append(d)
         }
 
         if power == 0 {
-            self.init(digits)
+            self.init(words: words)
         }
         else {
             self.init()
-            for d in digits.reversed() {
-                self.multiply(byDigit: power)
-                self.addDigit(d)
+            for d in words.reversed() {
+                self.multiply(byWord: power)
+                self.addWord(d)
             }
         }
     }
@@ -91,19 +99,19 @@ extension String {
     /// - Complexity: O(count) when radix is a power of two; otherwise O(count^2).
     public init(_ v: BigUInt, radix: Int, uppercase: Bool = false) {
         precondition(radix > 1)
-        let (charsPerDigit, power) = BigUInt.charsPerDigit(forRadix: radix)
+        let (charsPerWord, power) = BigUInt.charsPerWord(forRadix: radix)
 
-        guard !v.isEmpty else { self = "0"; return }
+        guard !v.isZero else { self = "0"; return }
 
         var parts: [String]
         if power == 0 {
-            parts = v.map { String($0, radix: radix, uppercase: uppercase) }
+            parts = v.words.map { String($0, radix: radix, uppercase: uppercase) }
         }
         else {
             parts = []
             var rest = v
             while !rest.isZero {
-                let mod = rest.divide(byDigit: power)
+                let mod = rest.divide(byWord: power)
                 parts.append(String(mod, radix: radix, uppercase: uppercase))
             }
         }
@@ -112,10 +120,10 @@ extension String {
         self = ""
         var first = true
         for part in parts.reversed() {
-            let zeroes = charsPerDigit - part.characters.count
+            let zeroes = charsPerWord - part.characters.count
             assert(zeroes >= 0)
             if !first && zeroes > 0 {
-                // Insert leading zeroes for mid-digits
+                // Insert leading zeroes for mid-Words
                 self += String(repeating: "0", count: zeroes)
             }
             first = false
@@ -128,6 +136,6 @@ extension BigUInt: CustomPlaygroundQuickLookable {
     /// Return the playground quick look representation of this integer.
     public var customPlaygroundQuickLook: PlaygroundQuickLook {
         let text = String(self)
-        return PlaygroundQuickLook.text(text + " (\(self.width) bits)")
+        return PlaygroundQuickLook.text(text + " (\(self.bitWidth) bits)")
     }
 }
