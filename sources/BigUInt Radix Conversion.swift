@@ -16,12 +16,12 @@ extension BigUInt: CustomStringConvertible {
     ///   if radix is a power of two; otherwise `power == radix^chars`.
     fileprivate static func charsPerWord(forRadix radix: Int) -> (chars: Int, power: Word) {
         var power: Word = 1
-        var overflow = ArithmeticOverflow.none
+        var overflow = false
         var count = 0
-        while overflow == .none {
+        while !overflow {
             let (p, o) = power.multipliedReportingOverflow(by: Word(radix))
             overflow = o
-            if o == .none || p == 0 {
+            if !o || p == 0 {
                 count += 1
                 power = p
             }
@@ -41,7 +41,7 @@ extension BigUInt: CustomStringConvertible {
         self.init(Substring(text), radix: radix)
     }
 
-    public init?<S: StringProtocol>(_ text: S, radix: Int = 10) {
+    public init?(_ text: Substring, radix: Int = 10) {
         precondition(radix > 1)
         let (charsPerWord, power) = BigUInt.charsPerWord(forRadix: radix)
 

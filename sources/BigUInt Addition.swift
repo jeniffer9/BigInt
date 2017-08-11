@@ -15,12 +15,12 @@ extension BigUInt {
     /// - Complexity: O(max(count, shift))
     internal mutating func addWord(_ word: Word, shiftedBy shift: Int = 0) {
         precondition(shift >= 0)
-        var carry: Word = word
-        var i = startIndex + shift
+        var carry = word
+        var i = shift
         while carry > 0 {
             let (d, c) = self[i].addingReportingOverflow(carry)
             self[i] = d
-            carry = (c == .overflow ? 1 : 0)
+            carry = (c ? 1 : 0)
             i += 1
         }
     }
@@ -43,17 +43,18 @@ extension BigUInt {
         precondition(shift >= 0)
         var carry = false
         var bi = 0
-        while bi < b.count || carry {
+        let bc = b.count
+        while bi < bc || carry {
             let ai = shift + bi
             let (d, c) = self[ai].addingReportingOverflow(b[bi])
             if carry {
                 let (d2, c2) = d.addingReportingOverflow(1)
                 self[ai] = d2
-                carry = c == .overflow || c2 == .overflow
+                carry = c || c2
             }
             else {
                 self[ai] = d
-                carry = c == .overflow
+                carry = c
             }
             bi += 1
         }
@@ -73,7 +74,7 @@ extension BigUInt {
     /// the word that is to be incremented.
     ///
     /// - Complexity: O(count + shift)
-    internal mutating func increment(atPosition shift: Int = 0) {
+    internal mutating func increment(shiftedBy shift: Int = 0) {
         self.addWord(1, shiftedBy: shift)
     }
 

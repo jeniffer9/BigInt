@@ -54,7 +54,7 @@ extension BigUInt {
             }
         }
         if ext > 0 && self.count > 0 {
-            self.words.insert(contentsOf: repeatElement(0 as Word, count: ext), at: 0)
+            self.shiftLeft(byWords: ext)
         }
     }
     
@@ -70,9 +70,9 @@ extension BigUInt {
         if down > 0 {
             var highbits: Word = 0
             for i in (ext ..< self.count).reversed() {
-                let Word = self[i]
-                result[i - ext] = highbits | Word >> down
-                highbits = Word << up
+                let word = self[i]
+                result[i - ext] = highbits | word >> down
+                highbits = word << up
             }
         }
         else {
@@ -82,57 +82,28 @@ extension BigUInt {
         }
         return result
     }
-    
+
     internal mutating func shiftRight(by amount: Word) {
         guard amount > 0 else { return }
-        guard amount < self.bitWidth else { self = 0; return }
+        guard amount < self.bitWidth else { self.clear(); return }
         
         let ext = Int(amount / Word(Word.bitWidth)) // External shift amount (new words)
         let down = Word(amount % Word(Word.bitWidth)) // Internal shift amount (subword shift)
         let up = Word(Word.bitWidth) - down
         
         if ext > 0 {
-            self.words.removeSubrange(0 ..< ext)
+            self.shiftRight(byWords: ext)
         }
         if down > 0 {
             var i = self.count - 1
             var highbits: Word = 0
             while i >= 0 {
-                let Word = self[i]
-                self[i] = highbits | Word >> down
-                highbits = Word << up
+                let word = self[i]
+                self[i] = highbits | word >> down
+                highbits = word << up
                 i -= 1
             }
-            self.shrink()
         }
-    }
-    
-    /// Returns the result of shifting a value's binary representation the
-    /// specified number of digits to the left.
-    public static func &<<(left: BigUInt, right: BigUInt) -> BigUInt {
-        return left.shiftedLeft(by: Word(right))
-    }
-    
-    /// Calculates the result of shifting a value's binary representation the
-    /// specified number of digits to the left, and stores the result in the
-    /// left-hand-side variable.
-    public static func &<<=(left: inout BigUInt, right: BigUInt) {
-        left.shiftLeft(by: Word(right))
-    }
-
-    /// Returns the result of shifting a value's binary representation the
-    /// specified number of digits to the right.
-    public static func &>>(left: BigUInt, right: BigUInt) -> BigUInt {
-        guard right.count <= 1 else { return 0 }
-        return left.shiftedRight(by: right[0])
-    }
-    
-    /// Calculates the result of shifting a value's binary representation the
-    /// specified number of digits to the right, and stores the result in the
-    /// left-hand-side variable.
-    public static func &>>=(left: inout BigUInt, right: BigUInt) {
-        guard right.count <= 1 else { left = 0; return }
-        left.shiftRight(by: right[0])
     }
     
     public static func >>=<Other: BinaryInteger>(lhs: inout BigUInt, rhs: Other) {
@@ -140,7 +111,7 @@ extension BigUInt {
             lhs <<= (0 - rhs)
         }
         else if rhs >= lhs.bitWidth {
-            lhs = 0
+            lhs.clear()
         }
         else {
             lhs.shiftRight(by: UInt(rhs))

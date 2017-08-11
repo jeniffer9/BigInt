@@ -28,13 +28,15 @@ import SipHash
 /// BigInt(255).abs.isPrime()   // Returns false
 /// ```
 ///
-public struct BigInt {
-    public enum Sign: Int {
-        case plus = 1
-        case minus = -1
+
+public struct BigInt: BinaryInteger {
+    public enum Sign {
+        case plus
+        case minus
     }
 
     public typealias Magnitude = BigUInt
+    public typealias Stride = BigInt
 
     /// The type representing a digit in `BigInt`'s underlying number system.
     public typealias Word = BigUInt.Word
@@ -44,12 +46,6 @@ public struct BigInt {
 
     /// True iff the value of this integer is negative.
     public var sign: Sign
-
-    @available(*, unavailable, renamed: "magnitude")
-    public var abs: BigUInt { return magnitude }
-
-    @available(*, unavailable, renamed: "sign")
-    public var negative: Bool { return sign == .minus }
 
     /// Initializes a new big integer with the provided absolute number and sign flag.
     public init(sign: Sign, magnitude: BigUInt) {
@@ -63,9 +59,7 @@ extension Array where Element == UInt {
         var increment = true
         for i in 0 ..< self.count {
             if increment {
-                let r = (~self[i]).addingReportingOverflow(1)
-                self[i] = r.partialValue
-                increment = r.overflow == .overflow
+                (self[i], increment) = (~self[i]).addingReportingOverflow(1)
             }
             else {
                 self[i] = ~self[i]
@@ -74,7 +68,7 @@ extension Array where Element == UInt {
     }
 }
 
-extension BigInt: BinaryInteger {
+extension BigInt {
     public init() {
         self.init(sign: .plus, magnitude: 0)
     }
@@ -95,8 +89,19 @@ extension BigInt: BinaryInteger {
             self.init(sign: .minus, magnitude: BigUInt(words: words))
         }
     }
+    
+    public init<S: Sequence>(words: S) where S.Element == Word {
+        var words = Array(words)
+        if (words.last ?? 0) >> (Word.bitWidth - 1) == 0 {
+            self.init(sign: .plus, magnitude: BigUInt(words: words))
+        }
+        else {
+            words.twosComplement()
+            self.init(sign: .minus, magnitude: BigUInt(words: words))
+        }
+    }
 
-    public init<T>(_ source: T) where T : FloatingPoint {
+    public init<T>(_ source: T) where T : BinaryFloatingPoint {
         if source.sign == .plus {
             self.init(sign: .plus, magnitude: BigUInt(source))
         }
@@ -109,8 +114,9 @@ extension BigInt: BinaryInteger {
         self.init(source)
     }
 
-    public init?<T>(exactly source: T) where T : FloatingPoint {
-        guard source.floatingPointClass == .positiveNormal || source.floatingPointClass == .negativeNormal else { return nil }
+    public init?<T>(exactly source: T) where T : BinaryFloatingPoint {
+        guard source.floatingPointClass == .positiveNormal
+            || source.floatingPointClass == .negativeNormal else { return nil }
         guard source.rounded(.towardZero) == source else { return nil }
         self.init(source)
     }
@@ -119,7 +125,7 @@ extension BigInt: BinaryInteger {
         self.init(source)
     }
 
-    public init<T>(extendingOrTruncating source: T) where T : BinaryInteger {
+    public init<T>(truncatingIfNeeded source: T) where T : BinaryInteger {
         self.init(source)
     }
 }
@@ -130,11 +136,12 @@ extension BigInt {
     }
 
     public var bitWidth: Int {
+        guard !magnitude.isZero else { return 0 }
         return magnitude.bitWidth + 1
     }
 
     public var trailingZeroBitCount: Int {
-        // FIXME negative values?
+        // Amazingly, this works fine for negative numbers
         return magnitude.trailingZeroBitCount
     }
 
@@ -180,22 +187,15 @@ extension BigInt {
             if value.sign == .plus {
                 return value.magnitude[index]
             }
-            else if index <= decrementLimit {
+            if index <= decrementLimit {
                 return ~(value.magnitude[index] &- 1)
             }
-            else {
-                return ~value.magnitude[index]
-            }
+            return ~value.magnitude[index]
         }
     }
 
     public var words: Words {
         return Words(self)
-    }
-
-    // FIXME: Remove this
-    public func _word(at n: Int) -> UInt {
-        return words[n]
     }
 }
 
@@ -223,9 +223,7 @@ extension BigInt {
             words.twosComplement()
             return BigInt(sign: .minus, magnitude: BigUInt(words: words))
         }
-        else {
-            return BigInt(sign: .plus, magnitude: BigUInt(words: words))
-        }
+        return BigInt(sign: .plus, magnitude: BigUInt(words: words))
     }
 
     public static func |(lhs: inout BigInt, rhs: BigInt) -> BigInt {
@@ -242,9 +240,7 @@ extension BigInt {
             words.twosComplement()
             return BigInt(sign: .minus, magnitude: BigUInt(words: words))
         }
-        else {
-            return BigInt(sign: .plus, magnitude: BigUInt(words: words))
-        }
+        return BigInt(sign: .plus, magnitude: BigUInt(words: words))
     }
 
     public static func ^(lhs: inout BigInt, rhs: BigInt) -> BigInt {
@@ -261,9 +257,7 @@ extension BigInt {
             words.twosComplement()
             return BigInt(sign: .minus, magnitude: BigUInt(words: words))
         }
-        else {
-            return BigInt(sign: .plus, magnitude: BigUInt(words: words))
-        }
+        return BigInt(sign: .plus, magnitude: BigUInt(words: words))
     }
 
     public static func &=(lhs: inout BigInt, rhs: BigInt) {
@@ -287,10 +281,6 @@ extension BigInt {
     /// - Parameter `text`: A string optionally starting with "-" or "+" followed by characters corresponding to numerals in the given radix. (0-9, a-z, A-Z)
     /// - Parameter `radix`: The base of the number system to use, or 10 if unspecified.
     /// - Returns: The integer represented by `text`, or nil if `text` contains a character that does not represent a numeral in `radix`.
-    public init?(_ text: String, radix: Int = 10) {
-        self.init(Substring(text), radix: radix)
-    }
-
     public init?<S: StringProtocol>(_ text: S, radix: Int = 10) {
         self.init(Substring(text), radix: radix)
     }
@@ -300,16 +290,15 @@ extension BigInt {
         var sign: Sign = .plus
         if text.characters.first == "-" {
             sign = .minus
-            text = text[text.index(after: text.startIndex)...]
+            text = text.dropFirst()
         }
         else if text.characters.first == "+" {
-            text = text[text.index(after: text.startIndex)...]
+            text = text.dropFirst()
         }
         guard let magnitude = BigUInt(text, radix: radix) else { return nil }
         self.magnitude = magnitude
         self.sign = sign
     }
-
 }
 
 extension String {
@@ -397,10 +386,7 @@ extension BigInt: SipHashable {
     }
 }
 
-extension BigInt: Strideable {
-    /// A type that can represent the distance between two values of `BigInt`.
-    public typealias Stride = BigInt
-
+extension BigInt {
     /// Returns `self + n`.
     public func advanced(by n: Stride) -> BigInt {
         return self + n
@@ -502,7 +488,7 @@ extension BigInt {
     mutating func shiftRight(by amount: Word) {
         magnitude.shiftRight(by: amount)
         if sign == .minus, magnitude.isZero {
-            magnitude = 1
+            magnitude.load(1)
         }
     }
 
@@ -523,9 +509,7 @@ extension BigInt {
     }
 
     public static func <<<Other: BinaryInteger>(lhs: BigInt, rhs: Other) -> BigInt {
-        if rhs < (0 as Other) {
-            return lhs >> (0 - rhs)
-        }
+        guard rhs >= (0 as Other) else { return lhs >> (0 - rhs) }
         return lhs.shiftedLeft(by: Word(rhs))
     }
 
@@ -539,18 +523,16 @@ extension BigInt {
     }
 
     public static func >><Other: BinaryInteger>(lhs: BigInt, rhs: Other) -> BigInt {
-        if rhs < (0 as Other) {
-            return lhs << (0 - rhs)
-        }
-        else {
-            return lhs.shiftedRight(by: Word(rhs))
-        }
+        guard rhs >= (0 as Other) else { return lhs << (0 - rhs) }
+        return lhs.shiftedRight(by: Word(rhs))
     }
 
     public static func >>=<Other: BinaryInteger>(lhs: inout BigInt, rhs: Other) {
         if rhs < (0 as Other) {
             lhs <<= (0 - rhs)
         }
-        lhs.shiftRight(by: Word(rhs))
+        else {
+            lhs.shiftRight(by: Word(rhs))
+        }
     }
 }
