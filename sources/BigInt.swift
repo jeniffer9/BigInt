@@ -30,9 +30,9 @@ import SipHash
 ///
 
 public struct BigInt: BinaryInteger {
-    public enum Sign {
-        case plus
-        case minus
+    public enum Sign: Int {
+        case plus = 1
+        case minus = -1
     }
 
     public typealias Magnitude = BigUInt
