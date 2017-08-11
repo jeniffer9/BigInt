@@ -11,7 +11,6 @@
 		11A7395F1F23C473001ACD6D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334CF1F23C2C3002FD689 /* SipHash.framework */; };
 		11A739601F23C47A001ACD6D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334D11F23C2C3002FD689 /* SipHash.framework */; };
 		11A739611F23C480001ACD6D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334D31F23C2C3002FD689 /* SipHash.framework */; };
-		A17C12831F23CD0400EC0F2D /* SipHash.xcodeproj in Frameworks */ = {isa = PBXBuildFile; fileRef = 113334C21F23C2C3002FD689 /* SipHash.xcodeproj */; };
 		BB241C441DDB70600067F917 /* BigUInt Addition.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C301DDB70600067F917 /* BigUInt Addition.swift */; };
 		BB241C451DDB70600067F917 /* BigUInt Bitwise Ops.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C311DDB70600067F917 /* BigUInt Bitwise Ops.swift */; };
 		BB241C461DDB70600067F917 /* BigUInt Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB241C321DDB70600067F917 /* BigUInt Comparison.swift */; };
@@ -234,7 +233,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A17C12831F23CD0400EC0F2D /* SipHash.xcodeproj in Frameworks */,
 				113334DA1F23C2D3002FD689 /* SipHash.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
