@@ -11,7 +11,39 @@ import Foundation
 extension BigUInt {
     //MARK: NSData Conversion
 
-    /// Initializes an integer from the bits stored inside a piece of `NSData`.
+    public init(_ buffer: UnsafeRawBufferPointer) {
+        // This assumes Word is binary.
+        precondition(Word.bitWidth % 8 == 0)
+
+        self.init()
+
+        let length = buffer.count
+        guard length > 0 else { return }
+        let bytesPerDigit = Word.bitWidth / 8
+        var index = length / bytesPerDigit
+        var c = bytesPerDigit - length % bytesPerDigit
+        if c == bytesPerDigit {
+            c = 0
+            index -= 1
+        }
+
+        var word: Word = 0
+        for byte in buffer {
+            word <<= 8
+            word += Word(byte)
+            c += 1
+            if c == bytesPerDigit {
+                self[index] = word
+                index -= 1
+                c = 0
+                word = 0
+            }
+        }
+        assert(c == 0 && word == 0 && index == -1)
+    }
+
+
+    /// Initializes an integer from the bits stored inside a piece of `Data`.
     /// The data is assumed to be in network (big-endian) byte order.
     public init(_ data: Data) {
         // This assumes Word is binary.
@@ -45,7 +77,7 @@ extension BigUInt {
         assert(c == 0 && word == 0 && index == -1)
     }
 
-    /// Return an `NSData` instance that contains the base-256 representation of this integer, in network (big-endian) byte order.
+    /// Return a `Data` value that contains the base-256 representation of this integer, in network (big-endian) byte order.
     public func serialize() -> Data {
         // This assumes Digit is binary.
         precondition(Word.bitWidth % 8 == 0)

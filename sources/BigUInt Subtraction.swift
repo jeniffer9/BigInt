@@ -14,17 +14,18 @@ extension BigUInt {
     ///
     /// - Note: If the result indicates an overflow, then `self` becomes the two's complement of the absolute difference.
     /// - Complexity: O(count)
-    internal mutating func subtractWordReportingOverflow(_ word: Word, shiftedBy shift: Int = 0) -> ArithmeticOverflow {
+    internal mutating func subtractWordReportingOverflow(_ word: Word, shiftedBy shift: Int = 0) -> Bool {
         precondition(shift >= 0)
         var carry: Word = word
         var i = shift
+        let count = self.count
         while carry > 0 && i < count {
             let (d, c) = self[i].subtractingReportingOverflow(carry)
             self[i] = d
-            carry = (c == .overflow ? 1 : 0)
+            carry = (c ? 1 : 0)
             i += 1
         }
-        return carry > 0 ? .overflow : .none
+        return carry > 0
     }
 
     /// Subtract `word` from this integer, returning the difference and a flag that is true if the operation
@@ -32,7 +33,7 @@ extension BigUInt {
     ///
     /// - Note: If `overflow` is true, then the returned value is the two's complement of the absolute difference.
     /// - Complexity: O(count)
-    internal func subtractingWordReportingOverflow(_ word: Word, shiftedBy shift: Int = 0) -> (partialValue: BigUInt, overflow: ArithmeticOverflow) {
+    internal func subtractingWordReportingOverflow(_ word: Word, shiftedBy shift: Int = 0) -> (partialValue: BigUInt, overflow: Bool) {
         var result = self
         let overflow = result.subtractWordReportingOverflow(word, shiftedBy: shift)
         return (result, overflow)
@@ -45,7 +46,7 @@ extension BigUInt {
     /// - Complexity: O(count)
     internal mutating func subtractWord(_ word: Word, shiftedBy shift: Int = 0) {
         let overflow = subtractWordReportingOverflow(word, shiftedBy: shift)
-        precondition(overflow == .none)
+        precondition(!overflow)
     }
 
     /// Subtract a digit `d` from this integer and return the result.
@@ -64,25 +65,27 @@ extension BigUInt {
     ///
     /// - Note: If the result indicates an overflow, then `self` becomes the twos' complement of the absolute difference.
     /// - Complexity: O(count)
-    public mutating func subtractReportingOverflow(_ b: BigUInt, shiftedBy shift: Int = 0) -> ArithmeticOverflow {
+    public mutating func subtractReportingOverflow(_ b: BigUInt, shiftedBy shift: Int = 0) -> Bool {
         precondition(shift >= 0)
         var carry = false
         var bi = 0
-        while bi < b.count || (shift + bi < count && carry) {
+        let bc = b.count
+        let count = self.count
+        while bi < bc || (shift + bi < count && carry) {
             let ai = shift + bi
             let (d, c) = self[ai].subtractingReportingOverflow(b[bi])
             if carry {
                 let (d2, c2) = d.subtractingReportingOverflow(1)
                 self[ai] = d2
-                carry = c == .overflow || c2 == .overflow
+                carry = c || c2
             }
             else {
                 self[ai] = d
-                carry = c == .overflow
+                carry = c
             }
             bi += 1
         }
-        return ArithmeticOverflow(carry)
+        return carry
     }
 
     /// Subtract `other` from this integer, returning the difference and a flag indicating arithmetic overflow.
@@ -90,7 +93,7 @@ extension BigUInt {
     ///
     /// - Note: If `overflow` is true, then the result value is the twos' complement of the absolute value of the difference.
     /// - Complexity: O(count)
-    public func subtractingReportingOverflow(_ other: BigUInt, shiftedBy shift: Int) -> (partialValue: BigUInt, overflow: ArithmeticOverflow) {
+    public func subtractingReportingOverflow(_ other: BigUInt, shiftedBy shift: Int) -> (partialValue: BigUInt, overflow: Bool) {
         var result = self
         let overflow = result.subtractReportingOverflow(other, shiftedBy: shift)
         return (result, overflow)
@@ -100,7 +103,7 @@ extension BigUInt {
     ///
     /// - Note: When the operation overflows, then `partialValue` is the twos' complement of the absolute value of the difference.
     /// - Complexity: O(count)
-    public func subtractingReportingOverflow(_ other: BigUInt) -> (partialValue: BigUInt, overflow: ArithmeticOverflow) {
+    public func subtractingReportingOverflow(_ other: BigUInt) -> (partialValue: BigUInt, overflow: Bool) {
         return self.subtractingReportingOverflow(other, shiftedBy: 0)
     }
     
@@ -111,7 +114,7 @@ extension BigUInt {
     /// - Complexity: O(count)
     public mutating func subtract(_ other: BigUInt, shiftedBy shift: Int = 0) {
         let overflow = subtractReportingOverflow(other, shiftedBy: shift)
-        precondition(overflow == .none)
+        precondition(!overflow)
     }
 
     /// Subtract `b` from this integer, and return the difference.
@@ -129,7 +132,7 @@ extension BigUInt {
     ///
     /// - Requires: !isZero
     /// - Complexity: O(count)
-    public mutating func decrement(atPosition shift: Int = 0) {
+    public mutating func decrement(shiftedBy shift: Int = 0) {
         self.subtract(1, shiftedBy: shift)
     }
 
